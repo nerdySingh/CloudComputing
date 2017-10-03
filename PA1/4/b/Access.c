@@ -22,34 +22,40 @@ int checkfile(char filename[])
         fclose(f);
         return 1;
     }
-
- 
 }
+
 void randomAccess(char filename[])
 {
     FILE *f;
+    int i=1;
     f=fopen(filename,"r");
+    printf("\n This is Random access for %s:",filename);
+    printf("\n");
     char buffer[Max_iterations];
     if(f!=NULL)
     {
-        fseek(f,2L,0);
-        while(fgets(buffer,Max_iterations,f));
-        printf("The random access data is :%s\n",buffer);
+        while(fgetc(f)!=EOF)
+        {
+            fseek(f,i,SEEK_SET);
+            while(fgets(buffer,Max_iterations,f));
+            i = i*2;
+        }
+        //printf("The random access data is :%s\n",buffer);
         fclose(f);
     }
-
 }
+
 void *sequentialAccess(char filename[])
 {
     FILE *f;
+    printf("\n This is sequential access for %s:",filename);
     f=fopen(filename,"r");
     char buffer[Max_iterations];
     if(f!=NULL)
     {
         while(fgets(buffer,Max_iterations,f));
-        printf("The sequential access data is :%s\n",buffer);
+        //printf("The sequential access data is :%s\n",buffer);
         fclose(f);
-
     }
     else
     {
@@ -57,13 +63,13 @@ void *sequentialAccess(char filename[])
     }
     randomAccess(filename);
     return NULL;
-
 }
+
  void *initialize(void *arg)
  {
     int r,i;
     int *myid = (int *) arg;
-    printf("This is the thread %d\n",*myid);
+    printf("\n  This is the thread %d\n",*myid);
     char filename1[] = "TestB.txt";
     char filename2[] = "TestKB.txt";
     char filename3[] = "TestMB.txt";
@@ -78,16 +84,20 @@ void *sequentialAccess(char filename[])
     }
     return NULL;
 }
+
 int main()
 {
         int i,count;
         count =numb_threds; 
         while(count<9)
         {
-        pthread_t th[numb_threds];
-        for(i=0;i<numb_threds;i++)
+        pthread_t th[count];
+        for(i=0;i<count;i++)
         {
-            pthread_create(&th[i],NULL,initialize,&i);
+            pthread_create(&th[i],NULL,initialize,&i);   
+        }
+        for(i=0;i<count;i++)
+        {
             pthread_join(th[i],NULL);
         }
         count = count * 2 ;
