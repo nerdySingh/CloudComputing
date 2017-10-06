@@ -9,8 +9,8 @@
 #include<pthread.h>
 #define threads 8
 #define bufferSize 6400
-void test(int argc , char *argv[])
-{}
+
+clock_t start,end;
 void *connectionTest(void *sock)
 {
     int sockServer,n;
@@ -22,13 +22,17 @@ void *connectionTest(void *sock)
     struct hostent *server;
     char buffer[bufferSize];
     int val;
+    double latency, thru;
+    
+
     serverPort = (unsigned short)sock;
     printf("%hu\n",serverPort);
+
     if ((sockServer =socket(PF_INET,SOCK_STREAM,IPPROTO_TCP))<0)
     {
         printf("Socket Failed\n");
     }
-    printf("scoekte created;\n");
+
     memset(&serverAddress,0,sizeof(serverAddress));
     serverAddress.sin_family = AF_INET;
     serverAddress.sin_addr.s_addr =htonl(INADDR_ANY);
@@ -51,7 +55,13 @@ void *connectionTest(void *sock)
             printf("Error writing to socket\n");
         }
         printf("Contents fFrom the Server are:%s\n",buffer);
+        end =clock();
+    latency = (double)(end-start)/CLOCKS_PER_SEC;
+    thru = 524288 / latency;
+    thru = thru / 1000000;
 
+    printf("Latency Of the System in seconds is %f\n",latency);
+    printf("The throughput of the system in Mb/second's is %f\n",thru);
     close(sockServer);
     return (NULL);  
 }
@@ -73,6 +83,7 @@ int main(int argc, char *argv[])
     }
     serverPort = atoi(argv[2]);
     server = gethostbyname(argv[1]);
+    start =clock();
     for(i=0;i<threads;i++)
     {
         pthread_create(&th[i],NULL,connectionTest,(void *)serverPort);

@@ -5,9 +5,9 @@
 #include <string.h>
 #include <unistd.h>
 #include <pthread.h>
-
+#include <ctype.h>
 #define MaxClients 5
-#define threads 17
+#define threads 8
 #define bufferSize 6400
 struct ThreadArgs
 {
@@ -18,7 +18,7 @@ struct ThreadArgs
 void HandleClient(int clientsocket)
 {
     char buffer[bufferSize];
-    int receivedMsg;
+    int receivedMsg,i;
 
     if((receivedMsg =recv(clientsocket,buffer,bufferSize,0))<0)
     {
@@ -27,21 +27,20 @@ void HandleClient(int clientsocket)
     
     while(receivedMsg >0)
     {
-    
-        if(send(clientsocket,buffer,receivedMsg,0)!=receivedMsg)
-        {
-            printf("send failed\n");
-        }
-        if((receivedMsg = recv(clientsocket,buffer,bufferSize,0))<0)
-        {
-            printf("Receive Failed");
-        }
-        else
-        {
+            if(send(clientsocket,buffer,receivedMsg,0)!=receivedMsg)
+            {
+                printf("Send Failed.\n");
+            }
+            if((receivedMsg = recv(clientsocket,buffer,bufferSize,0))<0)
+            {
+                printf("Receive Failed");
+            }
             
-            printf("The message received is :%s\n",buffer);
-            send(clientsocket,buffer,receivedMsg,0);
-        }
+                receivedMsg = recv(clientsocket,buffer,bufferSize,0);
+                printf("The Contents are :%s\n",buffer);
+                printf("Receibed %d\n",receivedMsg);
+
+            
     }
     close(clientsocket);
 }
