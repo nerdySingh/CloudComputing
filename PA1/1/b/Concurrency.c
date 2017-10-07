@@ -7,6 +7,7 @@
 int g =0;
 void *threadFunctionFlop(void *arg)
 {
+    printf("This is thread executing the IOPS instruction for Concurrency.%d\n ",(int)arg);
     long d  = 0x3fd5555555555555L;
     clock_t start,end;
     double cpu_time_used;
@@ -53,6 +54,9 @@ int main()
         for(i=0;i<no_threads;i++)
         {
             pthread_create(&th[i],NULL,threadFunctionFlop,&i);
+        }
+        for(i=0;i<no_threads;i++)
+        {
             pthread_join(th[i],NULL);
         }
 	printf("No of threads exexuted:%d\n",i);
