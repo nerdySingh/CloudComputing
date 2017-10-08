@@ -27,12 +27,4 @@ int main(int argc, char* argv[]) {
       if(sum < GB) {
 	printf("Total allocated so far: %ld MB\n", sum/MB);
       } else {
-	printf("Total allocated so far: %ld GB\n", sum/GB);
-      }
-      if(sum > (1*GB) )  break;
-    } else {
-      printf("FAIL.\n");
-      break;
-    }
-  }
-}
+	printf("Total al
