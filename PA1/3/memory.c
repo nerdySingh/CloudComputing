@@ -2,111 +2,57 @@
 #include<stdio.h>
 #include<pthread.h>
 #include<string.h>
-clock_t start,end;
-void write8Bytesfile()
+#include<time.h>
+#define threads 1
+clock_t start,end; 
+
+#define GB 1000000000 
+
+double latency;
+void write8Bytesfile(char *p)
 {
     FILE *f;
+    time_t start,end,duration;
     char buffer[8],buffer1[15],buffer2[15],ch;
-    int len,i;
-    start = clock();
-    double latency;
-    f = fopen("8Bytes.txt","r"); //Conducting Read + Write Operation
-    if (f==NULL)
+    char *ch1=p;
+    int len;
+    if (ch1!=NULL)
     {
-        f = fopen("8Bytes.txt","w");
-        memset(buffer,'A',8);
-        fprintf(f,"%s",buffer);
-        fclose(f);
+     
+       memset(ch1,'A',8);
+       printf("Sequential Write is Done.\n");
+       len=strlen(ch1);
+       memcpy(buffer1,ch1,8);
+       printf("Sequential Read is Done.%s\n",buffer1);
     }
-    else
-    {
-        i=0;
-        memset(buffer,0,8);
-        while((ch =fgetc(f))!=EOF)
-        {
-            buffer2[i] = ch;
-            i +=1;
-        }
-        //printf("Values:%s\n",buffer2);
-        memcpy(buffer1,buffer2,strlen(buffer2)+1);
-        //printf("The Contents of the file as read are:%s\n",buffer1);
-        fclose(f);
-        end = clock();
-    }
-
-    latency = (double)(end-start)/CLOCKS_PER_SEC;
-    printf("latency of 8 Bytes Sequential Read + Write in seconds is %f\n",latency);
 }
-void write8KBytesfile()
+
+void *initialize(void *args)
 {
-    FILE *f;
-    char buffer[8000],buffer1[15000],buffer2[15000],ch;
-    int len,i;
-    start = clock();
-    double latency;
-    f = fopen("8KB.txt","r"); //Conducting Read + Write Operation
-    if (f==NULL)
-    {
-        f = fopen("8KB.txt","w");
-        memset(buffer,'A',8000);
-        fprintf(f,"%s",buffer);
-        fclose(f);
-    }
-    else
-    {
-        i=0;
-        memset(buffer,0,8000);
-        while((ch =fgetc(f))!=EOF)
-        {
-            buffer2[i] = ch;
-            i +=1;
-        }
-        //printf("Values:%s\n",buffer2);
-        memcpy(buffer1,buffer2,strlen(buffer2)+1);
-        //printf("The Contents of the file as read are:%s\n",buffer1);
-        fclose(f);
-        end = clock();
-    }
-
-    latency = (double)(end-start)/CLOCKS_PER_SEC;
-    printf("latency of 8Kbytes sequential Read + Write in seconds is %f\n",latency);
-
+   	
+	char *t = (char *)args;
+	start =clock();
+	write8Bytesfile(t);
+	end=clock();
+	latency = (double)((end-start)/CLOCKS_PER_SEC);
+	printf("latency is %f\n",latency);
+        
     
-}
-
-void write8MBfile()
-{
-    char *data;
-    FILE *f;
-    void *ptr1;
-    int len,i;
-    char *buffer;
-    int bytes =  8*1024*1024;
-    data = malloc(bytes);
-    buffer = malloc(bytes);
-    for(i=0;i<bytes;i++)
-    {
-        data[i] = 'A';
-    }
-    printf("Sequential write in memory is done.\n");
-    buffer=data;
-    printf("Sequential read in memory is done.\n");
-    free(buffer);
-    free(data);
-}
-
-void *initialize()
-{
-    write8Bytesfile();
-    write8KBytesfile();
-    write8MBfile();
     return (NULL);
 }
 
 int main()
 {
+    char *p;
+    int count =threads,i;
     pthread_t th;
-    pthread_create(&th,NULL,initialize,NULL);
+    p =malloc(GB);
+    for(i=0;i<GB;i++)
+    {
+      ((char *)p)[i] ='B'; 
+    }
+    pthread_create(&th,NULL,initialize,(char *)p);
     pthread_join(th,NULL);
+    free(p);
     return 0;
 }
