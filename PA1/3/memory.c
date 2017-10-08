@@ -78,16 +78,19 @@ void write8MBfile()
 {
     char *data;
     FILE *f;
-    int len;
-    int bytes = 8 * 1024*1024;
-    data = malloc(bytes*(sizeof(char)));
-    for(int i=0;i<bytes;i++)
+    void *ptr1;
+    int len,i;
+    char *buffer;
+    int bytes =  8*1024*1024;
+    data = malloc(bytes);
+    for(i=0;i<bytes;i++)
     {
-     data[i] = 'A';
+        data[i] = 'A';
     }
-    len = sizeof(data); 
-    printf("memory:%d\n",len);
-    free(data);
+    printf("Sequential write in memory is done.\n");
+    memcpy(buffer,data,(strlen(data)+1));
+    printf("Sequential read in memory is done.\n");
+
 }
 
 void *initialize()
