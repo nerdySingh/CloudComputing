@@ -76,23 +76,38 @@ void write8KBytesfile()
 
 void write8MBfile()
 {
-    char *data;
     FILE *f;
-    void *ptr1;
+    char buffer[8000000],buffer1[15000000],buffer2[15000000],ch;
     int len,i;
-    char *buffer;
-    int bytes =  8*1024*1024;
-    data = malloc(bytes);
-    buffer = malloc(bytes);
-    for(i=0;i<bytes;i++)
+    start = clock();
+    double latency;
+    f = fopen("8MB.txt","r"); //Conducting Read + Write Operation
+    if (f==NULL)
     {
-        data[i] = 'A';
+        f = fopen("8MB.txt","w");
+        memset(buffer,'A',8000000);
+        fprintf(f,"%s",buffer);
+        fclose(f);
     }
-    printf("Sequential write in memory is done.\n");
-    buffer=data;
-    printf("Sequential read in memory is done.\n");
-    free(buffer);
-    free(data);
+    else
+    {
+        i=0;
+        memset(buffer,0,8000000);
+        while((ch =fgetc(f))!=EOF)
+        {
+            buffer2[i] = ch;
+            i +=1;
+        }
+        //printf("Values:%s\n",buffer2);
+        memcpy(buffer1,buffer2,strlen(buffer2)+1);
+        //printf("The Contents of the file as read are:%s\n",buffer1);
+        fclose(f);
+        end = clock();
+    }
+
+    latency = (double)(end-start)/CLOCKS_PER_SEC;
+    printf("latency of 8Kbytes sequential Read + Write in seconds is %f\n",latency);
+
 }
 
 void *initialize()
