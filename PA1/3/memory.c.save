@@ -1,0 +1,140 @@
+#include<stdlib.h>
+#include<stdio.h>
+#include<pthread.h>
+#include<string.h>
+#include<time.h>
+#define threads 1
+clock_t start,end; 
+
+#define GB 2000000000 
+
+double latency;
+
+
+void write80MBfile(char *p)
+{
+    FILE *f;
+    time_t start,end,duration;
+    char buffer[8],buffer1[80],buffer2[15],ch;
+    char *ch1=p;
+    char *ch2 = p;
+    int len,i;
+    if (ch1!=NULL)
+    {
+     
+       memset(ch1,'A',80000000);
+       printf("Sequential Write is Done.\n");
+       len=strlen(ch1);
+       memcpy(ch2,ch1,80000000);
+       //printf("%d\n",len);
+       
+       printf("Sequential Read is Done.\n");
+    }
+}
+
+void write8MBfile(char *p)
+{
+    FILE *f;
+    time_t start,end,duration;
+    char buffer[8],buffer1[8000000],buffer2[15],ch;
+    char *ch1=p;
+    int len;
+    if (ch1!=NULL)
+    {
+     
+       memset(ch1,'A',8000000);
+       printf("Sequential Write is Done.\n");
+       len=strlen(ch1);
+       memcpy(buffer1,ch1,8000000);
+       printf("Sequential Read is Done.\n");
+    }
+}
+
+//8kb file is this.
+void write8KBfile(char *p)
+{
+    FILE *f;
+    time_t start,end,duration;
+    char buffer[8],buffer1[8000],buffer2[15],ch;
+    char *ch1=p;
+    int len;
+    if (ch1!=NULL)
+    {
+     
+       memset(ch1,'A',8000);
+       printf("Sequential Write is Done.\n");
+       len=strlen(ch1);
+       memcpy(buffer1,ch1,8000);
+       printf("Sequential Read is Done.\n");
+    }
+}
+
+
+
+// 8 bytes file starts here
+void write8Bytesfile(char *p)
+{
+    FILE *f;
+    time_t start,end,duration;
+    char buffer[8],buffer1[15],buffer2[15],ch;
+    char *ch1=p;
+    int len;
+    if (ch1!=NULL)
+    {
+     
+       memset(ch1,'A',8);
+       printf("Sequential Write is Done.\n");
+       len=strlen(ch1);
+       memcpy(buffer1,ch1,8);
+       printf("Sequential Read is Done.\n");
+    }
+}
+
+void *initialize(void *args)
+{
+   	
+	char *t = (char *)args;
+	start =clock();
+	write8Bytesfile(t);
+	//latency = (double)((end-start)/CLOCKS_PER_SEC);
+       //	printf("latency is %f\n",latency);
+	//start =clock();
+	write8KBfile(t);
+	//end=clock();
+        write8MBfile(t);
+	write80MBfile(t);    
+	end=clock();
+	latency = (double)((end-start)/CLOCKS_PER_SEC);
+	printf("latency is %f\n",latency);
+	
+ 
+    return (NULL);
+}
+
+int main()
+{
+    char *p,*s;
+    int count =threads,i;
+    p =malloc(GB);
+    for(i=0;i<GB;i++)
+    {
+      ((char *)p)[i] ='B'; 
+    }
+
+    while(count <2)
+    {
+    	pthread_t th[count];
+	for(i=0;i<count;i++)
+	{
+		pthread_create(&th[i],NULL,initialize,(char *)p);
+	}
+	for(i=0;i<count;i++)
+	{
+    		pthread_join(th[i],NULL);
+	}
+     	count = count *2;
+     }
+
+    free(p);
+    return 0;
+}
