@@ -5,7 +5,9 @@
 #include <arpa/inet.h>
 #include<ctype.h>
 #include <pthread.h>
-#define threads 8 //Change the number of threads on the client here.
+#define threads 1 //Change the number of threads on the client here.
+clock_t start1,end;
+double latency,thru;
 void *start(void *args)
 {
     int clientSocket,data,i;
@@ -37,6 +39,15 @@ void *start(void *args)
                     data = recvfrom(clientSocket,buffer,1024,0,NULL, NULL);
     
         printf("Received from server: %s\n",buffer);
+        end =clock();
+        latency = (double)(end-start1)/CLOCKS_PER_SEC;
+        latency = latency /1000;
+        thru = 524288 / latency;
+        thru = thru / 1000000;
+    
+        printf("Latency Of the System in seconds is %f\n",latency);
+        printf("The throughput of the system in Mb/second's is %f\n",thru);
+        return (NULL);  
     
       }
 }
@@ -46,9 +57,10 @@ int main()
     int clientSocket,i;
     pthread_t th[threads];
     clientSocket = socket(PF_INET, SOCK_DGRAM, IPPROTO_UDP);
+    start1 =clock();
   for (i=0;i<threads;i++)
   {
-      pthread_create(&th[i],NULL,start,(void *)clientSocket);
+      pthread_create(&th[i],NULL,start,&clientSocket);
       pthread_join(th[i],NULL);
   }
   return 0;
