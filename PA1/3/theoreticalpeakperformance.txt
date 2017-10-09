@@ -1,0 +1,5 @@
+Ram size = 8192 MB
+Bus width = 64bit
+Ram Speed = 2000MHz
+
+There is only 1 Ram installed in the system hence the theoretical peak performance can be calculated as 2000 * 64 = 128000 Mbits/s or 16000bytes/s or 15.6 GB/s.

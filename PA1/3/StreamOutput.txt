@@ -1,0 +1,39 @@
+-------------------------------------------------------------
+STREAM version $Revision: 5.10 $
+-------------------------------------------------------------
+This system uses 8 bytes per array element.
+-------------------------------------------------------------
+Array size = 10000000 (elements), Offset = 0 (elements)
+Memory per array = 76.3 MiB (= 0.1 GiB).
+Total memory required = 228.9 MiB (= 0.2 GiB).
+Each kernel will be executed 10 times.
+ The *best* time for each kernel (excluding the first iteration)
+ will be used to compute the reported bandwidth.
+-------------------------------------------------------------
+Your clock granularity/precision appears to be 1 microseconds.
+Each test below will take on the order of 32290 microseconds.
+   (= 32290 clock ticks)
+Increase the size of the arrays if this shows that
+you are not getting at least 20 clock ticks per test.
+-------------------------------------------------------------
+WARNING -- The above is only a rough guideline.
+For best results, please be sure you know the
+precision of your system timer.
+-------------------------------------------------------------
+Function    Best Rate MB/s  Avg time     Min time     Max time
+Copy:            5962.3     0.027934     0.026835     0.031094
+Scale:           5879.5     0.028267     0.027213     0.029666
+Add:             8507.9     0.029748     0.028209     0.032793
+Triad:           7999.7     0.031743     0.030001     0.034875
+-------------------------------------------------------------
+Solution Validates: avg error less than 1.000000e-13 on all three arrays
+-------------------------------------------------------------
+
+
+
+now the performance using stream can be calculated as :
+
+
+lets take the best performance of the above values say Add: 8.303 GB/s and the theoretical performance is calculated as 15.625 GB/s
+
+hence the efficiency of the System is 8.303 / 15.625 = 53.1392 %
